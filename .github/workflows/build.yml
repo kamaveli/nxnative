@@ -23,21 +23,18 @@ jobs:
           bye
           EOF
 
-      - name: Pobranie NX Native
+      - name: Pobranie NX Native z submodułami
         run: |
-          git clone https://github.com/kpargiela/NX2Apple.git nx_source
+          git clone --recursive https://github.com/kpargiela/NX2Apple.git nx_source
 
-      - name: Kompilacja i budowanie IPA dla iOS z uwzględnieniem Update
+      - name: Kompilacja i budowanie IPA dla iOS
         run: |
           cd nx_source
           python3 -m venv venv
           source venv/bin/activate
           pip install --upgrade pip
           
-          # Pełna synchronizacja silnika wewnątrz poprawnego katalogu
-          python3 tools/engine.py sync
-          
-          # Uruchomienie budowania bezpośrednio ze wskazaniem kluczy i plików w workspace
+          # Uruchomienie budowania z poprawnym kontekstem
           python3 tools/build_shell_template.py \
             --engine "." \
             --out "../build_workspace/PokemonLegendsZA.ipa"
@@ -48,4 +45,5 @@ jobs:
           put build_workspace/PokemonLegendsZA.ipa /home/ubuntu/switch/
           bye
           EOF
+
 

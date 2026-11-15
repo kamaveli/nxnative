@@ -25,7 +25,7 @@ jobs:
 
       - name: Pobranie NX Native
         run: |
-          git clone https://github.com/NX-Native/nx-native.git nx_source
+          git clone https://github.com/kpargiela/NX2Apple.git nx_source
 
       - name: Kompilacja i łączenie NSP z Update w plik IPA
         run: |

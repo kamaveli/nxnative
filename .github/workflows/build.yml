@@ -34,7 +34,10 @@ jobs:
           source venv/bin/activate
           pip install --upgrade pip
           
-          # Uruchomienie budowania z poprawnym kontekstem
+          # Jawna synchronizacja silnika wymagana przed wywołaniem szablonu
+          python3 tools/engine.py sync
+          
+          # Uruchomienie budowania paczki
           python3 tools/build_shell_template.py \
             --engine "." \
             --out "../build_workspace/PokemonLegendsZA.ipa"

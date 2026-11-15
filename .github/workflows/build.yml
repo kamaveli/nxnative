@@ -30,16 +30,26 @@ jobs:
       - name: Kompilacja i łączenie NSP z Update w plik IPA
         run: |
           python3 -m pip install --upgrade pip
-          # Dostosuj tę ścieżkę do skryptu budującego w repozytorium nx-native, np.:
-          # python3 nx_source/scripts/build.py ...
+          # Przejście do folderu projektu i instalacja zależności (jeśli wymagane)
+          cd nx_source
+          pip3 install -r requirements.txt || true
           
-          # Symulacja wyjściowa (zastąp poleceniem kompilacji NX Native)
-          mkdir -p output_ipa
-          cp build_workspace/Pokemon\ Legends\ Z-A.nsp output_ipa/PokemonLegendsZA.ipa
+          # Uruchomienie skryptu budującego (wskazujemy bazę, update oraz klucze z folderu roboczego)
+          # (Zastąp nazwę skryptu pythonowego, jeśli w repozytorium nazywa się inaczej, np. main.py lub build.py)
+          python3 -m src.main \
+            --base "../build_workspace/Pokemon Legends Z-A.nsp" \
+            --update "../build_workspace/Pokemon Legends Z-A v2.0.2.nsp" \
+            --keys "../build_workspace/prod.keys" \
+            --output "../build_workspace/PokemonLegendsZA.ipa" || \
+          python3 build.py \
+            --base "../build_workspace/Pokemon Legends Z-A.nsp" \
+            --update "../build_workspace/Pokemon Legends Z-A v2.0.2.nsp" \
+            --keys "../build_workspace/prod.keys" \
+            --output "../build_workspace/PokemonLegendsZA.ipa"
 
       - name: Odsyłanie gotowego pliku IPA z powrotem na VPS
         run: |
           sftp -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
-            put output_ipa/*.ipa /home/ubuntu/switch/
+            put build_workspace/PokemonLegendsZA.ipa /home/ubuntu/switch/
             bye
           EOF

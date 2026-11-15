@@ -6,7 +6,7 @@ on:
 jobs:
   build:
     runs-on: macos-latest
-    
+
     steps:
       - name: Konfiguracja dostępu SSH do VPS
         uses: webfactory/ssh-agent@v0.9.0
@@ -17,24 +17,24 @@ jobs:
         run: |
           mkdir -p build_workspace
           sftp -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
-            get /home/ubuntu/switch/prod.keys build_workspace/
-            get "/home/ubuntu/switch/Pokemon Legends Z-A.nsp" build_workspace/
-            get "/home/ubuntu/switch/Pokemon Legends Z-A v2.0.2.nsp" build_workspace/
-            bye
+          get /home/ubuntu/switch/prod.keys build_workspace/
+          get "/home/ubuntu/switch/Pokemon Legends Z-A.nsp" build_workspace/
+          get "/home/ubuntu/switch/Pokemon Legends Z-A v2.0.2.nsp" build_workspace/
+          bye
           EOF
 
       - name: Pobranie NX Native
         run: |
           git clone https://github.com/kpargiela/NX2Apple.git nx_source
 
-      - name: Kompilacja i łączenie NSP z Update w plik IPA
+      - name: Sprawdzenie struktury pobranego repozytorium
         run: |
-          cd nx_source && python3 -m venv venv && source venv/bin/activate && pip install --upgrade pip && python3 build.py --base "../build_workspace/Pokemon Legends Z-A.nsp" --update "../build_workspace/Pokemon Legends Z-A v2.0.2.nsp" --keys "../build_workspace/prod.keys" --output "../build_workspace/PokemonLegendsZA.ipa"
-
+          cd nx_source
+          ls -la
 
       - name: Odsyłanie gotowego pliku IPA z powrotem na VPS
         run: |
           sftp -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
-            put build_workspace/PokemonLegendsZA.ipa /home/ubuntu/switch/
-            bye
+          put build_workspace/PokemonLegendsZA.ipa /home/ubuntu/switch/
+          bye
           EOF

@@ -34,7 +34,10 @@ jobs:
           source venv/bin/activate
           pip install --upgrade pip
           
-          # Uruchomienie skryptu budującego ze wskazaniem katalogu roboczego zawierającego NSP i Update
+          # Synchronizacja środowiska wymagana przez silnik NX2Apple
+          python3 tools/engine.py sync
+          
+          # Właściwe budowanie paczki ze wskazanym folderem roboczym
           python3 tools/build_shell_template.py \
             --engine "../build_workspace" \
             --out "../build_workspace/PokemonLegendsZA.ipa"
@@ -45,3 +48,4 @@ jobs:
           put build_workspace/PokemonLegendsZA.ipa /home/ubuntu/switch/
           bye
           EOF
+

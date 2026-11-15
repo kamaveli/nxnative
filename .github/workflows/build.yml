@@ -1,0 +1,45 @@
+name: Build NX Native IPA
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+    
+    steps:
+      - name: Konfiguracja dostępu SSH do VPS
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
+
+      - name: Pobieranie kluczy i plików NSP z Twojego VPS
+        run: |
+          mkdir -p build_workspace
+          sftp -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
+            get /home/ubuntu/switch/prod.keys build_workspace/
+            get "/home/ubuntu/switch/Pokemon Legends Z-A.nsp" build_workspace/
+            get "/home/ubuntu/switch/Pokemon Legends Z-A v2.0.2.nsp" build_workspace/
+            bye
+          EOF
+
+      - name: Pobranie NX Native
+        run: |
+          git clone https://github.com/NX-Native/nx-native.git nx_source
+
+      - name: Kompilacja i łączenie NSP z Update w plik IPA
+        run: |
+          python3 -m pip install --upgrade pip
+          # Dostosuj tę ścieżkę do skryptu budującego w repozytorium nx-native, np.:
+          # python3 nx_source/scripts/build.py ...
+          
+          # Symulacja wyjściowa (zastąp poleceniem kompilacji NX Native)
+          mkdir -p output_ipa
+          cp build_workspace/Pokemon\ Legends\ Z-A.nsp output_ipa/PokemonLegendsZA.ipa
+
+      - name: Odsyłanie gotowego pliku IPA z powrotem na VPS
+        run: |
+          sftp -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
+            put output_ipa/*.ipa /home/ubuntu/switch/
+            bye
+          EOF

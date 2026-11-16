@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Sprawdź Xcode
         run: ls /Applications | grep Xcode
-    
+
       - name: Konfiguracja dostępu SSH do VPS
         uses: webfactory/ssh-agent@v0.9.0
         with:
@@ -34,30 +34,29 @@ jobs:
         run: |
           cd nx_source
           sudo xcode-select -s /Applications/Xcode_27.1.app
+          brew bundle --file=Brewfile
           python3 -m venv venv
           source venv/bin/activate
           pip install --upgrade pip
-          brew install xcodegen
+          pip install lz4 capstone fonttools zbic nsz
 
-          # 1. Jawna synchronizacja silnika i szablonu
           python3 tools/engine.py sync
-          ls engine
-          ls engine/dm/ios
 
-          # 2. Wygenerowanie projektu powłoki
-          python3 tools/build_shell_template.py --engine "engine" --out "../build_workspace/PokemonLegendsZA.ipa"
+          export DM_FULL_ROMFS=1
+          python3 engine/scripts/build_ipa_from_nsp.py ../build_workspace -k ../build_workspace/prod.keys
 
+          find .. -name "*.ipa" -o -name "romfs.img"
 
       - name: Odsyłanie gotowego pliku IPA z powrotem na VPS
         run: |
-          sftp -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
-          put build_workspace/PokemonLegendsZA.ipa /home/ubuntu/switch/
+          IPA=$(find . -name "*.ipa" -type f | head -1)
+          echo "Znaleziony IPA: $IPA"
+          if [ -z "$IPA" ]; then echo "Brak pliku IPA"; exit 1; fi
+          sftp -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << EOF
+          put "$IPA" /home/ubuntu/switch/
           bye
           EOF
 
       - name: Post Konfiguracja dostępu SSH do VPS
         if: always()
         run: echo "Zakończono proces przesyłania."
-
-
-

@@ -50,13 +50,15 @@ jobs:
 
       - name: Odsyłanie gotowego pliku IPA z powrotem na VPS
         run: |
-          IPA=$(find . -name "*.ipa" -type f | head -1)
+          IPA=$(find build_workspace -maxdepth 1 -name "*.ipa" -type f | head -1)
           echo "Znaleziony IPA: $IPA"
+          ls -lh "$IPA"
           if [ -z "$IPA" ]; then echo "Brak pliku IPA"; exit 1; fi
           sftp -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << EOF
           put "$IPA" /home/ubuntu/switch/
           bye
           EOF
+
 
       - name: Post Konfiguracja dostępu SSH do VPS
         if: always()

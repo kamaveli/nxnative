@@ -47,4 +47,9 @@ jobs:
           bye
           EOF
 
+      - name: Post Konfiguracja dostępu SSH do VPS
+        if: always()
+        run: echo "Zakończono proces przesyłania."
+
+
 

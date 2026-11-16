@@ -33,6 +33,7 @@ jobs:
       - name: Kompilacja i budowanie IPA dla iOS
         run: |
           cd nx_source
+          sudo xcode-select -s /Applications/Xcode_27.1.app
           python3 -m venv venv
           source venv/bin/activate
           pip install --upgrade pip

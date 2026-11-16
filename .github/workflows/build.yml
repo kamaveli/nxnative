@@ -21,8 +21,7 @@ jobs:
           mkdir -p build_workspace
           sftp -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
           get /home/ubuntu/switch/prod.keys build_workspace/
-          get "/home/ubuntu/switch/Pokemon Legends Z-A.nsp" build_workspace/
-          get "/home/ubuntu/switch/Pokemon Legends Z-A v2.0.2.nsp" build_workspace/
+          get "/home/ubuntu/switch/DARK SOULS REMASTERED.nsp" build_workspace/
           bye
           EOF
 

@@ -16,12 +16,15 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
 
-      - name: Pobieranie kluczy i plików NSP z Twojego VPS
+      - name: Pobieranie kluczy i plików gry z Twojego VPS
         run: |
-          mkdir -p build_workspace
+          mkdir -p build_workspace/zelda
           sftp -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
           get /home/ubuntu/switch/prod.keys build_workspace/
-          get "/home/ubuntu/switch/DARK SOULS REMASTERED.nsp" build_workspace/
+          get "/home/ubuntu/switch/The Legend of Zelda Breath of the Wild.nsz" build_workspace/zelda/
+          get "/home/ubuntu/switch/The Legend of Zelda Breath of the Wild Update.nsz" build_workspace/zelda/
+          get "/home/ubuntu/switch/The Legend of Zelda Breath of the Wild [DLC The Master Trials].nsz" build_workspace/zelda/
+          get "/home/ubuntu/switch/The Legend of Zelda Breath of the Wild [DLC The Champions Ballad].nsp" build_workspace/zelda/
           bye
           EOF
 

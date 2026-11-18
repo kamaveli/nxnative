@@ -11,6 +11,26 @@ jobs:
       - name: Sprawdź Xcode
         run: ls /Applications | grep Xcode
 
+      - name: Free Disk Space (macOS)
+        run: |
+          echo "=== Wolne miejsce przed czyszczeniem ==="
+          df -h
+          
+          echo "Usuwanie zbędnych wersji Xcode i symulatorów..."
+          sudo rm -rf /Applications/Xcode_[0-9]*.app
+          sudo rm -rf /Library/Developer/CoreSimulator/Profiles/Runtimes/*
+          
+          echo "Usuwanie Android SDK i innych dużych paczek..."
+          sudo rm -rf /usr/local/share/android
+          sudo rm -rf /Users/runner/Library/Android/sdk
+          
+          echo "Czyszczenie pamięci podręcznej..."
+          sudo rm -rf ~/Library/Caches/*
+          sudo rm -rf /Library/Caches/*
+          
+          echo "=== Wolne miejsce po czyszczeniu ==="
+          df -h
+
       - name: Konfiguracja dostępu SSH do VPS
         uses: webfactory/ssh-agent@v0.9.0
         with:
@@ -61,7 +81,7 @@ jobs:
           bye
           EOF
 
-
       - name: Post Konfiguracja dostępu SSH do VPS
         if: always()
         run: echo "Zakończono proces przesyłania."
+

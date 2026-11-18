@@ -17,7 +17,7 @@ jobs:
           df -h
           
           echo "Usuwanie zbędnych wersji Xcode i symulatorów..."
-          sudo rm -rf /Applications/Xcode_[0-9]*.app
+          sudo find /Applications -maxdepth 1 -name "Xcode_*.app" ! -name "Xcode_27.2.app" -exec sudo rm -rf {} +
           sudo rm -rf /Library/Developer/CoreSimulator/Profiles/Runtimes/*
           
           echo "Usuwanie Android SDK i innych dużych paczek..."

@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: xcode-27
+    runs-on: namespace-profile-nxnative
 
     steps:
       - name: Sprawdź Xcode

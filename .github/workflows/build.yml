@@ -41,8 +41,7 @@ jobs:
           mkdir -p build_workspace/zelda
           sftp -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
           get /home/ubuntu/switch/prod.keys build_workspace/zelda/
-          get "/home/ubuntu/switch/DARK SOULS REMASTERED.nsp" build_workspace/zelda/
-          get "/home/ubuntu/switch/DARK SOULS REMASTERED Update.nsp" build_workspace/zelda/
+          get "/home/ubuntu/switch/Donkey Kong Bananza.nup" build_workspace/zelda/
           bye
           EOF
 
